@@ -4,7 +4,10 @@
  * 
  * 
  */
-class Highrise_Api_People extends Highrise_Http
+
+require_once 'Highrise/Request.php';
+
+class Highrise_Api_People
 {
     /**
      * Returns a single person.
@@ -14,7 +17,12 @@ class Highrise_Api_People extends Highrise_Http
      */
     public function show($id)
     {
-        return $this->_sendRequest("/people/{$id}.xml",Highrise_Http::METHOD_GET);
+        $request = new Highrise_Request();
+        $request->endpoint = "/people/{$id}.xml";
+        $request->method = Highrise_Api::METHOD_GET;
+        $request->expected = 200;
+        return $request;
+ 
     }
     
     /**
@@ -90,8 +98,13 @@ class Highrise_Api_People extends Highrise_Http
      */
     public function create(Highrise_Entity_Person $person)
     {
-        $response = $this->_sendRequest('/people.xml', Highrise_Http::METHOD_POST, 201, $person->toXml());
-        return $response;
+        //$response = $this->_sendRequest('/people.xml', Highrise_Http::METHOD_POST, 201, $person->toXml());
+        $request = new Highrise_Request();
+        $request->endpoint = '/people.xml';
+        $request->method = Highrise_Api::METHOD_POST;
+        $request->expected = 201;
+        $request->data = $person->toXml();
+        return $request;
     }
     
     /**

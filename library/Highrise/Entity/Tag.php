@@ -4,6 +4,9 @@
  * 
  * 
  */
+
+require_once 'Highrise/EntityDataObject.php';
+
 class Highrise_Entity_Tag implements Highrise_EntityDataObject
 {
     public $id;

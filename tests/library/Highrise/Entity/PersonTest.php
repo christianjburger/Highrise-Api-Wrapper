@@ -38,7 +38,7 @@ class Highrise_Entity_PersonTest extends PHPUnit_Framework_TestCase
      */
     public function testToXml ()
     {
-        print $this->Highrise_Entity_Person->toXml();
+        //print $this->Highrise_Entity_Person->toXml();
     }
     
     

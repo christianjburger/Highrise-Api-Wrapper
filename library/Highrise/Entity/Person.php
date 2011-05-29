@@ -4,6 +4,10 @@
  * 
  * 
  */
+
+require_once 'Highrise/EntityObject.php';
+require_once 'Highrise/Entity/ContactData.php';
+
 class Highrise_Entity_Person implements Highrise_EntityObject
 {
     public $id;
@@ -11,8 +15,23 @@ class Highrise_Entity_Person implements Highrise_EntityObject
     public $lastName;
     public $title;
     public $background = null;
+    
     protected $_tags = array();
+    
+    /**
+     * @var Highrise_Entity_ContactData
+     */
     protected $_contactData;
+    
+    public static function createFromXml($xml)
+    {
+        if ($xml instanceof Highrise_Response)
+        {
+            $xml = $xml->getData();
+        }
+        $doc = new DOMDocument();
+        $doc->loadXML($xml);
+    }
     
     public function __construct()
     {

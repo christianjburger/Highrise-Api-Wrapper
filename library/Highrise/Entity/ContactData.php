@@ -4,6 +4,15 @@
  * 
  * 
  */
+
+require_once 'Highrise/EntityDataObject.php';
+require_once 'Highrise/Entity/ContactData/EmailAddress.php';
+require_once 'Highrise/Entity/ContactData/Address.php';
+require_once 'Highrise/Entity/ContactData/PhoneNumber.php';
+require_once 'Highrise/Entity/ContactData/InstantMessenger.php';
+require_once 'Highrise/Entity/ContactData/TwitterAccount.php';
+require_once 'Highrise/Entity/ContactData/WebAddress.php';
+
 class Highrise_Entity_ContactData implements Highrise_EntityDataObject
 {
     protected $_emailAddresses = array();

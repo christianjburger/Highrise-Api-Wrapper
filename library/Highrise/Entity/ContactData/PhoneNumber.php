@@ -4,6 +4,9 @@
  * 
  * 
  */
+
+require_once 'Highrise/EntityDataObject.php';
+
 class Highrise_Entity_ContactData_PhoneNumber implements Highrise_EntityDataObject
 {
     public $location;

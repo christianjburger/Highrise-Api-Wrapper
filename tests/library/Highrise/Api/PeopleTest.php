@@ -1,4 +1,5 @@
 <?php
+require_once 'Highrise/Api.php';
 require_once 'Highrise/Api/People.php';
 /**
  * Highrise_Api_People test case.
@@ -16,7 +17,7 @@ class Highrise_Api_PeopleTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         // TODO Auto-generated Highrise_Api_PeopleTest::setUp()
-        $this->Highrise_Api_People = new Highrise_Api_People('annalienrealty', 'b5f72e50efe0981f947a5d8da1d531c3', true);
+        $this->Highrise_Api_People = new Highrise_Api_People();
     }
     /**
      * Cleans up the environment after running a test.
@@ -39,9 +40,13 @@ class Highrise_Api_PeopleTest extends PHPUnit_Framework_TestCase
      */
     public function testShow ()
     {
-        // TODO Auto-generated Highrise_Api_PeopleTest->testShow()
-        $this->markTestIncomplete("show test not implemented");
-        $this->Highrise_Api_People->show(/* parameters */);
+        $api = new Highrise_Api('annalienrealty', 'b5f72e50efe0981f947a5d8da1d531c3', false);
+        
+        $request = $this->Highrise_Api_People->show(72813248);
+        $response = $api->request($request);
+        //$person = Highrise_Entity_Person::createFromXml($response);
+        $this->assertEquals($request->getExpectedResponse(),$response->getCode());
+        
     }
     /**
      * Tests Highrise_Api_People->listAll()
@@ -75,14 +80,16 @@ class Highrise_Api_PeopleTest extends PHPUnit_Framework_TestCase
      */
     public function testCreate ()
     {
+        $this->markTestIncomplete("listAll test not implemented");
         $person = new Highrise_Entity_Person();
         $person->firstName = 'ted';
         $person->contactData()
             ->addEmailAddress('ted@thinkopen.biz',null,'work')
             ->addAddress('JHB',null,'South Africa','Gauteng', '123', '456','work')
             ;
-        $response = $this->Highrise_Api_People->create($person);
-        print_r($response);
+        $api = new Highrise_Api('annalienrealty', 'b5f72e50efe0981f947a5d8da1d531c3', true);
+        $response = $api->request($this->Highrise_Api_People->create($person));
+        //print_r($response);
     }
     /**
      * Tests Highrise_Api_People->update()

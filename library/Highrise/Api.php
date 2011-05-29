@@ -4,7 +4,10 @@
  * 
  * 
  */
-class Highrise_Http
+
+require_once 'Highrise/Response.php';
+
+class Highrise_Api
 {
     const METHOD_GET     = 'GET';
     const METHOD_POST    = 'POST';
@@ -26,6 +29,27 @@ class Highrise_Http
         $this->_debug   = $debug;
     }
     
+    public function request(Highrise_Request $request)
+    {
+        $response = $this->_sendRequest(
+            $request->getEndpoint(), 
+            $request->getMethod(), 
+            $request->getData()
+        );
+        
+        if ($request->getExpectedResponse() != $response->getCode()) 
+        {
+            throw new Exception('Expected response ' . $request->getExpectedResponse() . ' but API returned ' . $response->getCode());
+        }
+        
+        if ($response->getData() === false)
+        {
+            throw new Exception('HTTP request failed');
+        }
+        
+        return $response;
+    }
+    
     /**
      * @todo HTTPS
      * Enter description here ...
@@ -33,7 +57,7 @@ class Highrise_Http
      * @param unknown_type $method
      * @param unknown_type $data
      */
-    protected function _sendRequest($endpoint, $method, $expected, $data = null)
+    protected function _sendRequest($endpoint, $method, $data = null)
     {
         //$encoded           = ($data) ? http_build_query($data) : null;
         $additionalHeaders = null;
@@ -57,24 +81,17 @@ class Highrise_Http
         }
 
         curl_setopt_array($request, $options);
-        $response = curl_exec($request);
+        $responseData = curl_exec($request);
         $header   = curl_getinfo($request); 
         curl_close($request);
-        print $data;
-        $result           = new stdClass();
-        $result->code     = $header['http_code'];
-        $result->header   = $header;
-        $result->response = $response;
         
-        if ($this->_debug) print_r($result);
+        $response           = new Highrise_Response();
+        $response->code     = $header['http_code'];
+        $response->header   = $header;
+        $response->data     = $responseData;
         
-        $this->handleError($expected, $header['http_code']);
-        return $result;
-    }
-    
-    public function handleError($expected,$actual)
-    {
-        if ($expected != $actual) throw new Exception('Expected response ' . $expected . ' but API returned ' . $actual);
+        if ($this->_debug) print_r($response);
+        return $response;
     }
 }
 ?>
