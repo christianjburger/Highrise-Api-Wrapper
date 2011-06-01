@@ -5,10 +5,10 @@
  * 
  */
 
-require_once 'Highrise/Client/Request.php';
-require_once 'Highrise/Client/Response.php';
+require_once 'Highrise/Api/Request.php';
+require_once 'Highrise/Api/Response.php';
 
-class Highrise_Client
+class Highrise_Api_Client
 {
     const METHOD_GET     = 'GET';
     const METHOD_POST    = 'POST';
@@ -44,7 +44,17 @@ class Highrise_Client
         return $this->_lastResponse;
     }
     
-    public function request(Highrise_Client_Request $request)
+    public function getToken()
+    {
+        return $this->_token;
+    }
+    
+    public function getAccount()
+    {
+        return $this->_account;
+    }
+    
+    public function request(Highrise_Api_Request $request)
     {
         $this->_lastRequest = $request;
         
@@ -104,7 +114,7 @@ class Highrise_Client
         $header   = curl_getinfo($request); 
         curl_close($request);
         
-        $response           = new Highrise_Client_Response();
+        $response           = new Highrise_Api_Response();
         $response->code     = $header['http_code'];
         $response->header   = $header;
         $response->data     = $responseData;

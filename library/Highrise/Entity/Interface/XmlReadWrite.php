@@ -2,10 +2,9 @@
 /**
  *
  */
-interface Highrise_Entity_Object
+interface Highrise_Entity_Interface_XmlReadWrite
 {
     public function fromXml($xml);
     public function toXml();
-    public function getId();
 }
 ?>

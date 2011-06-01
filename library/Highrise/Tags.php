@@ -4,7 +4,7 @@
  * 
  * 
  */
-class Highrise_Tags extends Highrise_Client_ProxyAbstract
+class Highrise_Tags extends Highrise_Api_ClientAbstract
 {
     const SUBJECT_PEOPLE    = 'people';
     const SUBJECT_COMPANIES = 'companies';
@@ -18,9 +18,9 @@ class Highrise_Tags extends Highrise_Client_ProxyAbstract
      */
     public function listAll()
     {
-        $request = new Highrise_Client_Request();
+        $request = new Highrise_Api_Request();
         $request->endpoint = '/tags.xml';
-        $request->method   = Highrise_Client::METHOD_GET;
+        $request->method   = Highrise_Api_Client::METHOD_GET;
         $request->expected = 200;
         
         $response = $this->_client->request($request);
@@ -44,11 +44,11 @@ class Highrise_Tags extends Highrise_Client_ProxyAbstract
      * 
      * @return array $collection
      */
-    public function listSubject($subjectType,$subjectId)
+    public function listBySubject($subjectType,$subjectId)
     {
-        $request = new Highrise_Client_Request();
+        $request = new Highrise_Api_Request();
         $request->endpoint = "/{$subjectType}/{$subjectId}/tags.xml";
-        $request->method   = Highrise_Client::METHOD_GET;
+        $request->method   = Highrise_Api_Client::METHOD_GET;
         $request->expected = 200;
         
         $response = $this->_client->request($request);
@@ -76,9 +76,9 @@ class Highrise_Tags extends Highrise_Client_ProxyAbstract
      */
     public function listParties($tagId)
     {
-        $request = new Highrise_Client_Request();
+        $request = new Highrise_Api_Request();
         $request->endpoint = "/tags/{$tagId}.xml";
-        $request->method   = Highrise_Client::METHOD_GET;
+        $request->method   = Highrise_Api_Client::METHOD_GET;
         $request->expected = 200;
         
         $response = $this->_client->request($request);
@@ -102,18 +102,21 @@ class Highrise_Tags extends Highrise_Client_ProxyAbstract
      * @param string $subjectType
      * @param integer $subjectId
      * @param string $tagName
-     * 
+     * @return Highrise_Entity_Tag $tag
      */
     public function add($subjectType,$subjectId,$tagName)
     {
-        $request = new Highrise_Client_Request();
+        $request = new Highrise_Api_Request();
         $request->endpoint = "/{$subjectType}/{$subjectId}/tags.xml";
-        $request->method   = Highrise_Client::METHOD_POST;
+        $request->method   = Highrise_Api_Client::METHOD_POST;
         $request->expected = 201;
         $request->data     = "<name>$tagName</name>";
  
         $response = $this->_client->request($request);
-        print_r($response->getData());
+        
+        $tag = new Highrise_Entity_Tag();
+        $tag->fromXml($response->getData());
+        return $tag
     }
     
     /**
@@ -125,9 +128,9 @@ class Highrise_Tags extends Highrise_Client_ProxyAbstract
      */
     public function remove($subjectType,$subjectId,$tagId)
     {
-        $request = new Highrise_Client_Request();
+        $request = new Highrise_Api_Request();
         $request->endpoint = "/{$subjectType}/{$subjectId}/tags/{$tagId}.xml";
-        $request->method   = Highrise_Client::METHOD_DELETE;
+        $request->method   = Highrise_Api_Client::METHOD_DELETE;
         $request->expected = 200;
         
         $response = $this->_client->request($request);

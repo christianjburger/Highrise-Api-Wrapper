@@ -14,7 +14,7 @@ require_once 'Highrise/Entity/ContactData/TwitterAccount.php';
 require_once 'Highrise/Entity/ContactData/WebAddress.php';
 require_once 'Highrise/Entity/ContactData/CustomField.php';
 
-class Highrise_Entity_ContactData implements Highrise_Entity_DataObject
+class Highrise_Entity_ContactData implements Highrise_Entity_Interface_XmlProtected
 {
     protected $_emailAddresses    = array();
     protected $_addresses         = array();

@@ -7,7 +7,7 @@
 
 require_once 'Highrise/Entity/DataObject.php';
 
-class Highrise_Entity_ContactData_InstantMessenger implements Highrise_Entity_DataObject
+class Highrise_Entity_ContactData_InstantMessenger implements Highrise_Entity_Interface_XmlProtected
 {
     public $id;
     public $address;

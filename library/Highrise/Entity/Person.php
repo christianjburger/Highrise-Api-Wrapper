@@ -9,7 +9,8 @@ require_once 'Highrise/Entity/Object.php';
 require_once 'Highrise/Entity/ContactData.php';
 require_once 'Highrise/Entity/Tag.php';
 
-class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Highrise_Entity_Object
+class Highrise_Entity_Person extends Highrise_Api_ClientAbstract 
+    implements Highrise_Entity_Interface_XmlReadWrite
 {
     public $id;
     public $firstName;
@@ -17,7 +18,8 @@ class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Hi
     public $title;
     public $background = null;
     
-    protected $_tags = array();
+    protected $_tags  = array();
+    protected $_notes = array();
     
     /**
      * @var Highrise_Entity_ContactData
@@ -31,7 +33,7 @@ class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Hi
      */
     public function fromXml($data)
     {
-        if ($data instanceof Highrise_Client_Response)
+        if ($data instanceof Highrise_Api_Response)
         {
             $xml = $data->getData();
         } elseif (is_string($data)) {
@@ -63,8 +65,9 @@ class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Hi
         }
     }
     
-    public function __construct()
+    public function __construct($client = null)
     {
+        parent::__construct($client);
         $this->_contactData = new Highrise_Entity_ContactData();
     }
     
@@ -128,15 +131,26 @@ class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Hi
         $this->_tags[] = $tag;
     }
     
+    public function addNote($body, $id = null)
+    {
+        $note = new Highrise_Entity_Note();
+        $note->isNew       = true;
+        $note->id          = $id;
+        $note->subjectId   = $this->id;
+        $note->subjectType = Highrise_Notes::SUBJECT_PEOPLE;
+        
+        $this->_notes[] = $note;
+    }
+    
     public function getTags()
     {
         return $this->_tags;
     }
     
-    public function save($account, $token, $debug = false)
+    public function save()
     {
-        $people = new Highrise_People($account, $token, $debug);
-        $this->_client = $people->getClient();
+        $people = new Highrise_People($this->_client);
+        
         if ($this->id)
         {
             $people->update($this);
@@ -144,31 +158,47 @@ class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Hi
             $people->create($this);
         }
         
-        $this->saveTags($account, $token, $debug);
-        $this->saveNotes($account, $token, $debug);
+        $this->saveTags();
+        $this->saveNotes();
+        
+        return $this->getId();
     }
     
-    public function saveTags($account, $token, $debug = false)
+    public function saveTags()
     {
-        $tags = new Highrise_Tags($account, $token, $debug);
-        $this->_client = $tags->getClient();
+        $tags = new Highrise_Tags($this->_client);
+        
         foreach ($this->_tags as $tag)
         {
-            if ($tag->isNew === true)
+            if ($tag->isNew == true)
             {
                 $tags->add(Highrise_Tags::SUBJECT_PEOPLE, $this->id, $tag->name);
             }
             
-            if ($tag->isRemoved === true && $tag->id)
+            if ($tag->isRemoved == true && $tag->id !== null)
             {
                 $tags->remove(Highrise_Tags::SUBJECT_PEOPLE, $this->id, $tag->id);
             }
         }
     }
     
-    public function saveNotes($account, $token, $debug = false)
+    public function saveNotes()
     {
+        $notes = new Highrise_Notes($this->_client);
         
+        foreach ($this->_notes as $note)
+        {
+            if ($note->isNew == true)
+            {
+                if ($note->subjectId === null) $note->subjectId = $this->id;
+                $notes->create($note);
+            }
+            
+            if ($note->isRemoved == true && $note->id !== null)
+            {
+                $notes->destroy($note->id);
+            }
+        }
     }
     
 }
