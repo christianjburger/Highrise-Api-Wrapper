@@ -1,6 +1,6 @@
 <?php
-require_once 'Highrise/Api.php';
-require_once 'Highrise/Api/People.php';
+require_once 'Highrise/Client.php';
+require_once 'Highrise/People.php';
 /**
  * Highrise_Api_People test case.
  */
@@ -17,7 +17,7 @@ class Highrise_Api_PeopleTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         // TODO Auto-generated Highrise_Api_PeopleTest::setUp()
-        $this->Highrise_Api_People = new Highrise_Api_People();
+        $this->Highrise_Api_People = new Highrise_People('annalienrealty','b5f72e50efe0981f947a5d8da1d531c3');
     }
     /**
      * Cleans up the environment after running a test.
@@ -40,13 +40,11 @@ class Highrise_Api_PeopleTest extends PHPUnit_Framework_TestCase
      */
     public function testShow ()
     {
-        $api = new Highrise_Api('annalienrealty', 'b5f72e50efe0981f947a5d8da1d531c3', false);
-        
-        $request = $this->Highrise_Api_People->show(72813248);
-        $response = $api->request($request);
-        //$person = Highrise_Entity_Person::createFromXml($response);
+        $person = $this->Highrise_Api_People->show(57176377);
+        $request = $this->Highrise_Api_People->getClient()->getLastRequest();
+        $response = $this->Highrise_Api_People->getClient()->getLastResponse();
         $this->assertEquals($request->getExpectedResponse(),$response->getCode());
-        
+        print_r($person);
     }
     /**
      * Tests Highrise_Api_People->listAll()
@@ -87,8 +85,8 @@ class Highrise_Api_PeopleTest extends PHPUnit_Framework_TestCase
             ->addEmailAddress('ted@thinkopen.biz',null,'work')
             ->addAddress('JHB',null,'South Africa','Gauteng', '123', '456','work')
             ;
-        $api = new Highrise_Api('annalienrealty', 'b5f72e50efe0981f947a5d8da1d531c3', true);
-        $response = $api->request($this->Highrise_Api_People->create($person));
+        $people = new Highrise_People('annalienrealty', 'b5f72e50efe0981f947a5d8da1d531c3', true);
+        //$response = $people->request($this->Highrise_Api_People->create($person));
         //print_r($response);
     }
     /**

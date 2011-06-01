@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person>
+  <author-id type="integer">386862</author-id>
+  <background></background>
+  <company-id type="integer" nil="true"></company-id>
+  <created-at type="datetime">2011-01-07T11:04:22Z</created-at>
+  <first-name>Christian</first-name>
+  <group-id type="integer" nil="true"></group-id>
+  <id type="integer">57176377</id>
+  <last-name>Burger</last-name>
+  <owner-id type="integer" nil="true"></owner-id>
+  <title></title>
+  <updated-at type="datetime">2011-05-26T16:52:25Z</updated-at>
+  <visible-to>Everyone</visible-to>
+<tags type="array">
+  <tag>
+    <id type="integer">1181584</id>
+    <name>Owner</name>
+  </tag>
+  <tag>
+    <id type="integer">1181586</id>
+    <name>Investor</name>
+  </tag>
+</tags>
+<contact-data>
+  <web-addresses type="array">
+    <web-address>
+      <id type="integer">61459935</id>
+      <location>Personal</location>
+      <url>http://za.linkedin.com/christianburger</url>
+    </web-address>
+    <web-address>
+      <id type="integer">61459935</id>
+      <location>Personal</location>
+      <url>http://thinkopen.biz</url>
+    </web-address>
+  </web-addresses>
+  <instant-messengers type="array"/>
+  <twitter-accounts type="array">
+    <twitter-account>
+      <id type="integer">61459935</id>
+      <location>Personal</location>
+      <username>christianZA</username>
+      <url>http://twitter.com/christianZA</url>
+    </twitter-account>
+  </twitter-accounts>
+  <addresses type="array"/>
+  <email-addresses type="array">
+    <email-address>
+      <address>christian@thinkopen.biz</address>
+      <id type="integer">27307285</id>
+      <location>Work</location>
+    </email-address>
+  </email-addresses>
+  <phone-numbers type="array">
+    <phone-number>
+      <id type="integer">61464083</id>
+      <location>Work</location>
+      <number>0110837837</number>
+    </phone-number>
+    <phone-number>
+      <id type="integer">61464083</id>
+      <location>Mobile</location>
+      <number>0835661172</number>
+    </phone-number>
+  </phone-numbers>
+  <capsule-id>
+    <id type="integer">2297044</id>
+    <subject-field-id type="integer">318308</subject-field-id>
+    <value>123</value>
+  </capsule-id>
+  <old-tags>
+    <id type="integer">2297045</id>
+    <subject-field-id type="integer">318309</subject-field-id>
+    <value>Owner</value>
+  </old-tags>
+</contact-data>
+</person>

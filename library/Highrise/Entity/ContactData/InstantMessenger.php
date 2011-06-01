@@ -5,14 +5,46 @@
  * 
  */
 
-require_once 'Highrise/EntityDataObject.php';
+require_once 'Highrise/Entity/DataObject.php';
 
-class Highrise_Entity_ContactData_InstantMessenger implements Highrise_EntityDataObject
+class Highrise_Entity_ContactData_InstantMessenger implements Highrise_Entity_DataObject
 {
     public $id;
     public $address;
     public $protocol;
     public $location;
+    
+    public function fromXml($node)
+    {
+        if (!$node instanceof DOMNode)
+        {
+            throw new Exception('Not a valid XML object');
+        }
+        /* @var $node DOMNode */
+        
+        foreach ($node->childNodes as $childNode)
+        {
+            if ($childNode->nodeName == 'id')
+            {
+                $this->id = $childNode->nodeValue;
+            }
+            
+            if ($childNode->nodeName == 'address')
+            {
+                $this->address = $childNode->nodeValue;
+            }
+            
+            if ($childNode->nodeName == 'protocol')
+            {
+                $this->protocol = $childNode->nodeValue;
+            }
+            
+            if ($childNode->nodeName == 'location')
+            {
+                $this->location = $childNode->nodeValue;
+            }
+        }
+    }
     
     public function getXmlNode()
     {

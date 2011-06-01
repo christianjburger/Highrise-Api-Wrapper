@@ -4,7 +4,7 @@
  * 
  * 
  */
-class Highrise_Response
+class Highrise_Client_Response
 {
     public $code;
     

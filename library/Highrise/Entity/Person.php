@@ -5,10 +5,11 @@
  * 
  */
 
-require_once 'Highrise/EntityObject.php';
+require_once 'Highrise/Entity/Object.php';
 require_once 'Highrise/Entity/ContactData.php';
+require_once 'Highrise/Entity/Tag.php';
 
-class Highrise_Entity_Person implements Highrise_EntityObject
+class Highrise_Entity_Person extends Highrise_Client_ProxyAbstract implements Highrise_Entity_Object
 {
     public $id;
     public $firstName;
@@ -23,14 +24,43 @@ class Highrise_Entity_Person implements Highrise_EntityObject
      */
     protected $_contactData;
     
-    public static function createFromXml($xml)
+    /**
+     * Static method to create an instance of the Person class from a XML document
+     * @param string|Highrise_Response $xml
+     * @return Highrise_Entity_Person $person
+     */
+    public function fromXml($data)
     {
-        if ($xml instanceof Highrise_Response)
+        if ($data instanceof Highrise_Client_Response)
         {
-            $xml = $xml->getData();
+            $xml = $data->getData();
+        } elseif (is_string($data)) {
+            $xml = $data;
+        } else {
+            throw new Exception('Could not regocnise XML string/object provided');
         }
         $doc = new DOMDocument();
         $doc->loadXML($xml);
+
+        $this->id         = $doc->getElementsByTagName('id')->item(0)->nodeValue;
+        $this->firstName  = $doc->getElementsByTagName('first-name')->item(0)->nodeValue;
+        $this->lastName   = $doc->getElementsByTagName('last-name')->item(0)->nodeValue;
+        $this->title      = $doc->getElementsByTagName('title')->item(0)->nodeValue;
+        $this->background = $doc->getElementsByTagName('background')->item(0)->nodeValue;
+        $this->_contactData->fromXml($doc->getElementsByTagName('contact-data')->item(0));
+             
+        if ($doc->getElementsByTagName('tags')->item(0))
+        {
+            foreach ($doc->getElementsByTagName('tags')->item(0)->childNodes as $childNode)
+            {
+                if ($childNode->nodeName == 'tag')
+                {
+                    $object = new Highrise_Entity_Tag();
+                    $object->fromXml($childNode);
+                    $this->_tags[] = $object;
+                }
+            }
+        }
     }
     
     public function __construct()
@@ -45,55 +75,101 @@ class Highrise_Entity_Person implements Highrise_EntityObject
         
     public function toXml()
     {
-        $xml = new DOMDocument();
-        $person = $xml->createElement('person');
+        $doc = new DOMDocument();
+        $person = $doc->createElement('person');
         
-        $id = $xml->createElement('id',$this->id);
-        $id->setAttribute('type', 'integer');
-        
-        $firstName   = $xml->createElement('first-name', $this->firstName);
-        $lastName    = $xml->createElement('last-name' , $this->lastName);
-        $title       = $xml->createElement('title'     , $this->title);
-        $background  = $xml->createElement('background', $this->background);
-        $tags        = $xml->createElement('tags');
-        
-        if ($this->id) $person->appendChild($id);
-        $person->appendChild($firstName);
-        $person->appendChild($lastName);
-        $person->appendChild($title);
-        $person->appendChild($background);
-        $person->appendChild($xml->importNode($this->contactData()->getXmlNode(),true));
-        
-        foreach ($this->_tags as $tag)
+        if ($this->id) 
         {
-            $tags->appendChild($xml->importNode($tag->getXmlNode(),true));
+            $id = $doc->createElement('id',$this->id);
+            $id->setAttribute('type', 'integer');
+            $person->appendChild($id);
         }
-        if (count($this->_tags) > 0) $person->appendChild($tags);
         
-        $xml->appendChild($person);
-        return $xml->saveXML();
+        if ($this->firstName)
+        {
+            $person->appendChild($doc->createElement('first-name', $this->firstName));
+        }
+        
+        if ($this->lastName)
+        {
+            $person->appendChild($doc->createElement('last-name' , $this->lastName));
+        }
+        
+        if ($this->title) 
+        {
+            $person->appendChild($doc->createElement('title'     , $this->title));
+        }
+        
+        if ($this->background)
+        {
+            $person->appendChild($doc->createElement('background', $this->background));
+        }
+        
+        $person->appendChild($doc->importNode($this->getContactData()->getXmlNode(),true));
+        
+        $doc->appendChild($person);
+        return $doc->saveXML();
     }
     
-    public function fromXml($string)
-    {
-        $xml = simplexml_load_string($string);
-        return $xml->asXml();
-    }
-
     /**
      * @return Highrise_Entity_ContactData
      */
-    public function contactData()
+    public function getContactData()
     {
         return $this->_contactData;
     }
-    
-    public function addTag($id,$name)
+
+    public function addTag($name, $id = null)
     {
         $tag = new Highrise_Entity_Tag();
         $tag->id = $id;
         $tag->name = $name;
+        $tag->markNew();
         $this->_tags[] = $tag;
     }
+    
+    public function getTags()
+    {
+        return $this->_tags;
+    }
+    
+    public function save($account, $token, $debug = false)
+    {
+        $people = new Highrise_People($account, $token, $debug);
+        $this->_client = $people->getClient();
+        if ($this->id)
+        {
+            $people->update($this);
+        } else {
+            $people->create($this);
+        }
+        
+        $this->saveTags($account, $token, $debug);
+        $this->saveNotes($account, $token, $debug);
+    }
+    
+    public function saveTags($account, $token, $debug = false)
+    {
+        $tags = new Highrise_Tags($account, $token, $debug);
+        $this->_client = $tags->getClient();
+        foreach ($this->_tags as $tag)
+        {
+            if ($tag->isNew === true)
+            {
+                $tags->add(Highrise_Tags::SUBJECT_PEOPLE, $this->id, $tag->name);
+            }
+            
+            if ($tag->isRemoved === true && $tag->id)
+            {
+                $tags->remove(Highrise_Tags::SUBJECT_PEOPLE, $this->id, $tag->id);
+            }
+        }
+    }
+    
+    public function saveNotes($account, $token, $debug = false)
+    {
+        
+    }
+    
 }
 ?>

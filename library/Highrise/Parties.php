@@ -4,7 +4,7 @@
  * 
  * 
  */
-class Highrise_Api_Parties
+class Highrise_Parties
 {
 }
 ?>

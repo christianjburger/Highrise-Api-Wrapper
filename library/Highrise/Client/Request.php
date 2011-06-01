@@ -4,7 +4,7 @@
  * 
  * 
  */
-class Highrise_Request
+class Highrise_Client_Request
 {
     public $endpoint;
     

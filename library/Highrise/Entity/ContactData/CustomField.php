@@ -7,11 +7,12 @@
 
 require_once 'Highrise/Entity/DataObject.php';
 
-class Highrise_Entity_ContactData_WebAddress implements Highrise_Entity_DataObject
+class Highrise_Entity_ContactData_CustomField implements Highrise_Entity_DataObject
 {
     public $id;
-    public $url;
-    public $location;
+    public $subjectFieldId;
+    public $value;
+    public $label;
     
     public function fromXml($node)
     {
@@ -21,6 +22,8 @@ class Highrise_Entity_ContactData_WebAddress implements Highrise_Entity_DataObje
         }
         /* @var $node DOMNode */
         
+        $this->label = $node->nodeName;
+        
         foreach ($node->childNodes as $childNode)
         {
             if ($childNode->nodeName == 'id')
@@ -28,14 +31,14 @@ class Highrise_Entity_ContactData_WebAddress implements Highrise_Entity_DataObje
                 $this->id = $childNode->nodeValue;
             }
             
-            if ($childNode->nodeName == 'url')
+            if ($childNode->nodeName == 'value')
             {
-                $this->url = $childNode->nodeValue;
+                $this->value = $childNode->nodeValue;
             }
             
-            if ($childNode->nodeName == 'location')
+            if ($childNode->nodeName == 'subject-field-id')
             {
-                $this->location = $childNode->nodeValue;
+                $this->subjectFieldId = $childNode->nodeValue;
             }
         }
     }
@@ -43,20 +46,20 @@ class Highrise_Entity_ContactData_WebAddress implements Highrise_Entity_DataObje
     public function getXmlNode()
     {
         $xml = new DOMDocument();
-        $node = $xml->appendChild(new DOMElement('web-address'));
+        $node = $xml->appendChild(new DOMElement($this->label));
         if ($this->id !== null)
         {
             $node->appendChild(new DOMElement('id', $this->id));
         }
         
-        if ($this->url !== null)
+        if ($this->value !== null)
         {
-            $node->appendChild(new DOMElement('url', $this->url));
+            $node->appendChild(new DOMElement('value', $this->value));
         }
         
-        if ($this->location !== null) 
+        if ($this->subjectFieldId !== null)
         {
-            $node->appendChild(new DOMElement('location', $this->location));
+            $node->appendChild(new DOMElement('subject-field-id', $this->subjectFieldId));
         }
         return $node;
     }
