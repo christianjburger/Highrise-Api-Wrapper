@@ -19,6 +19,7 @@ class Highrise_Notes extends Highrise_Api_ClientAbstract
      * separate at /notes/#{id}/comments.xml.
      * @link GET /notes/#{id}.xml
      * @param integer $id
+     * @return Highrise_Entity_Note $note;
      */
     public function show($id)
     {
@@ -39,6 +40,9 @@ class Highrise_Notes extends Highrise_Api_ClientAbstract
      * using offsets. If 25 elements are returned (the page limit), use ?n=25 to fetch 
      * the next 25 and so on.
      * @link GET /#{ people || companies || kases || deals }/#{subject-id}/notes.xml
+     * @param string $subjectType
+     * @param integer $subjectId
+     * @return array $collection
      */
     public function listBySubject($subjectType,$subjectId)
     {
@@ -80,6 +84,8 @@ class Highrise_Notes extends Highrise_Api_ClientAbstract
      * 
      * As always, the URL for the newly-created note is passed back in the Location header.
 	 * @link /notes.xml (or like: /people/#{person-id}/notes.xml)
+	 * @param Highrise_Entity_Note $note;
+	 * @return Highrise_Api_Response $response;
      */
     public function create(Highrise_Entity_Note $note)
     {
@@ -89,12 +95,14 @@ class Highrise_Notes extends Highrise_Api_ClientAbstract
         $request->expected = 201;
         $request->data     = '<note><body>' . $note->body . '</body></note>';
  
-        $response = $this->_client->request($request);
+        return $this->_client->request($request);
     }
     
     /**
      * Updates an existing note with new details from the submitted XML.
      * @link PUT /notes/#{id}.xml
+     * @param Highrise_Entity_Note $note;
+     * @return Highrise_Api_Response $response;
      */
     public function update(Highrise_Entity_Note $note)
     {
@@ -104,12 +112,14 @@ class Highrise_Notes extends Highrise_Api_ClientAbstract
         $request->expected = 200;
         $request->data     = $note->toXml();
  
-        $response = $this->_client->request($request);
+        return $this->_client->request($request);
     }
     
     /**
      * Destroys the note at the referenced URL.
      * @link DELETE /notes/#{id}.xml
+     * @param integer $id
+     * @return Highrise_Api_Response $response;
      */
     public function destroy($id)
     {
@@ -118,7 +128,7 @@ class Highrise_Notes extends Highrise_Api_ClientAbstract
         $request->method   = Highrise_Api_Client::METHOD_DELETE;
         $request->expected = 200;
  
-        $response = $this->_client->request($request);
+        return $this->_client->request($request);
     }
 }
 ?>

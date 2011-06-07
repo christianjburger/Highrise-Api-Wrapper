@@ -116,7 +116,7 @@ class Highrise_Tags extends Highrise_Api_ClientAbstract
         
         $tag = new Highrise_Entity_Tag();
         $tag->fromXml($response->getData());
-        return $tag
+        return $tag;
     }
     
     /**
@@ -125,6 +125,7 @@ class Highrise_Tags extends Highrise_Api_ClientAbstract
      * @param string $subjectType
      * @param integer $subjectId
      * @param intger $tagId
+     * @return Highrise_Api_Response $response;
      */
     public function remove($subjectType,$subjectId,$tagId)
     {
@@ -133,7 +134,7 @@ class Highrise_Tags extends Highrise_Api_ClientAbstract
         $request->method   = Highrise_Api_Client::METHOD_DELETE;
         $request->expected = 200;
         
-        $response = $this->_client->request($request);
+        return $this->_client->request($request);
     }
 }
 ?>

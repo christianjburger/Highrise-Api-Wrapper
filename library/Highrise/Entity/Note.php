@@ -30,13 +30,14 @@ class Highrise_Entity_Note extends Highrise_Api_ClientAbstract
         } else {
             throw new Exception('Could not regocnise XML string/object provided');
         }
-        
         $doc = new DOMDocument();
         $doc->loadXML($xml);
-        /* @var $node DOMNode */
         
-        foreach ($doc->firstChild as $childNode)
+        
+       
+        foreach ($doc->firstChild->childNodes as $childNode)
         {
+             /* @var $childNode DOMNode */
             if ($childNode->nodeName == 'id')
             {
                 $this->id = $childNode->nodeValue;

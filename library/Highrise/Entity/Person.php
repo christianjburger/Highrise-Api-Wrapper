@@ -135,6 +135,7 @@ class Highrise_Entity_Person extends Highrise_Api_ClientAbstract
     {
         $note = new Highrise_Entity_Note();
         $note->isNew       = true;
+        $note->body        = $body;
         $note->id          = $id;
         $note->subjectId   = $this->id;
         $note->subjectType = Highrise_Notes::SUBJECT_PEOPLE;
