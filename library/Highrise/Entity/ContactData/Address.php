@@ -5,7 +5,7 @@
  * 
  */
 
-require_once 'Highrise/Entity/DataObject.php';
+require_once 'Highrise/Entity/Interface/XmlProtected.php';
 
 class Highrise_Entity_ContactData_Address implements Highrise_Entity_Interface_XmlProtected
 {
@@ -16,6 +16,10 @@ class Highrise_Entity_ContactData_Address implements Highrise_Entity_Interface_X
     public $street;
     public $zip;
     public $location = 'Work';
+    
+    const LOCATION_WORK = 'Work';
+    const LOCATION_HOME = 'Home';
+    const LOCATION_OTHER = 'Other';
     
     protected $_validLocations = array('Work','Home','Other');
     

@@ -5,9 +5,9 @@
  * 
  */
 
-require_once 'Highrise/Entity/DataObject.php';
+require_once 'Highrise/Entity/Interface/XmlProtected.php';
 
-class Highrise_Entity_Tag implements Highrise_Entity_DataObject
+class Highrise_Entity_Tag implements Highrise_Entity_Interface_XmlProtected
 {
     public $id        = null;
     public $name      = null;

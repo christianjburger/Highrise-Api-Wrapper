@@ -101,7 +101,8 @@ class Highrise_Api_Client
             CURLOPT_POSTFIELDS     => ($data && $method == self::METHOD_POST) ? $data : null,
             CURLOPT_HTTPHEADER     => array('Content-Type: application/xml', $additionalHeaders),
             CURLOPT_USERPWD        => $this->_token . ':X',
-            CURLOPT_VERBOSE        => ($this->_debug) ? true : false   
+            CURLOPT_VERBOSE        => ($this->_debug) ? true : false,
+            CURLOPT_CAPATH         => '/etc/ssl/certs/'
         );
         
         if ($method != self::METHOD_POST)

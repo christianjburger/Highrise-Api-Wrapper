@@ -5,7 +5,7 @@
  * 
  */
 
-require_once 'Highrise/Entity/DataObject.php';
+require_once 'Highrise/Entity/Interface/XmlProtected.php';
 require_once 'Highrise/Entity/ContactData/EmailAddress.php';
 require_once 'Highrise/Entity/ContactData/Address.php';
 require_once 'Highrise/Entity/ContactData/PhoneNumber.php';
@@ -174,7 +174,6 @@ class Highrise_Entity_ContactData implements Highrise_Entity_Interface_XmlProtec
         
         return $contact;
     }
-
     
     public function getEmailAddresses()
     {

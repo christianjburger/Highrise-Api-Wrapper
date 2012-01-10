@@ -5,9 +5,6 @@
  * 
  */
 
-require_once 'Highrise/Client/Request.php';
-require_once 'Highrise/Client/ProxyAbstract.php';
-
 class Highrise_People extends Highrise_Api_ClientAbstract
 {
 
@@ -42,8 +39,27 @@ class Highrise_People extends Highrise_Api_ClientAbstract
      */
     public function listAll($offset = null)
     {
+        $collection = array();
+        
         $append = ($offset) ? '?n=' . $offset : null;
-        return $this->_sendRequest('/people.xml' . $append,Highrise_Api_Client::METHOD_GET);
+        $request = new Highrise_Api_Request();
+        $request->endpoint = '/people.xml' . $append;
+        $request->method = Highrise_Api_Client::METHOD_GET;
+        $request->expected = 200;
+        
+        $response = $this->_client->request($request);
+        
+        $xml = simplexml_load_string($response->getData());
+        $result = $xml->xpath('/people/person');
+        $collection = array();
+        if (!$result) return $collection;
+        foreach ($result as $xmlEntry)
+        {
+            $person = new Highrise_Entity_Person();
+            $person->fromXml($xmlEntry->saveXml());
+            $collection[] = $person;
+        }
+        return $collection;
     }
     
     /**
@@ -54,10 +70,12 @@ class Highrise_People extends Highrise_Api_ClientAbstract
      * @param int $time
      * @return Highrise_Response $response
      */
-    public function listSince($time)
+    public function listSince($time, $offset = null)
     {
+        $append = ($offset) ? '&n=' . $offset : null;
+        
         $request = new Highrise_Api_Request();
-        $request->endpoint = '/people.xml?since=' . $time;
+        $request->endpoint = '/people.xml?since=' . $time . $append;
         $request->method = Highrise_Api_Client::METHOD_GET;
         $request->expected = 200;
         return $this->_client->request($request);
@@ -89,6 +107,38 @@ class Highrise_People extends Highrise_Api_ClientAbstract
         $request->method = Highrise_Api_Client::METHOD_GET;
         $request->expected=200;
         
+        $response = $this->_client->request($request);
+        
+        $xml = simplexml_load_string($response->getData());
+        $result = $xml->xpath('/people/person');
+        $collection = array();
+        if (!$result) return $collection;
+        foreach ($result as $xmlEntry)
+        {
+            $person = new Highrise_Entity_Person();
+            $person->fromXml($xmlEntry->saveXml());
+            $collection[] = $person;
+        }
+        return $collection;
+    }
+    
+    /**
+     * Returns a collection of people that have a name matching the term passed in through the URL. If 
+     * no people with the given term exist an empty people container will be returned. Results are paged 
+     * in groups of 25. Use ?n=25 to check for the next 25 results and so on.
+     * 
+     * @link GET /people/search.xml?term=David
+     * @param string $term
+     * @param int $offset
+     * @return array $collection
+     */
+    public function listByTerm($term, $offset = null)
+    {
+        $request = new Highrise_Api_Request();
+        $request->endpoint = '/people/search.xml?term=' . str_replace(' ', '+', $term);
+        $request->method   = Highrise_Api_Client::METHOD_GET;
+        $request->expected = 200;
+
         $response = $this->_client->request($request);
         
         $xml = simplexml_load_string($response->getData());
@@ -151,7 +201,16 @@ class Highrise_People extends Highrise_Api_ClientAbstract
     public function update(Highrise_Entity_Person $person,$reload = false)
     {
         $append = ($reload) ? '?reload=true' : null;
-        return $this->_sendRequest('/people/' . $person->getId() . '.xml' . $append, Highrise_Api_Client::METHOD_PUT, 200, $person->toXml());
+        
+        $request = new Highrise_Api_Request();
+        $request->endpoint = '/people/' . $person->getId() . '.xml';
+        $request->method = Highrise_Api_Client::METHOD_PUT;
+        $request->expected = 200;
+        $request->data = $person->toXml();
+        
+        $response = $this->_client->request($request);
+        
+        $person->fromXml($response->getData());
     }
     
     /**
@@ -161,7 +220,12 @@ class Highrise_People extends Highrise_Api_ClientAbstract
      */
     public function destroy($id)
     {
-        return $this->_sendRequest('/people/' . $id . '.xml', Highrise_Api_Client::METHOD_DELETE);
+        $request = new Highrise_Api_Request();
+        $request->endpoint = '/people/' . $person->getId() . '.xml';
+        $request->method = Highrise_Api_Client::METHOD_DELETE;
+        $request->expected = 200;
+        
+        $response = $this->_client->request($request);
     }
 }
 ?>

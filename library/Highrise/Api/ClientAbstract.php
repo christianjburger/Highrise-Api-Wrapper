@@ -30,5 +30,15 @@ abstract class Highrise_Api_ClientAbstract
     {
         return $this->_client;
     }
+    
+    protected function _paramsToString(array $params)
+    {
+        $string = null;
+        foreach ($params as $key => $value)
+        {
+            $string .= "&{$key}={$value}";
+        }
+        return $string;
+    }
 }
 ?>

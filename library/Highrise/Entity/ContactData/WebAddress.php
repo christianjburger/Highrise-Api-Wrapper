@@ -5,7 +5,7 @@
  * 
  */
 
-require_once 'Highrise/Entity/DataObject.php';
+require_once 'Highrise/Entity/Interface/XmlProtected.php';
 
 class Highrise_Entity_ContactData_WebAddress implements Highrise_Entity_Interface_XmlProtected
 {
